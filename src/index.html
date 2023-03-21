@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" theme="garden">
+<html lang="en" theme="forest">
   <head>
     <title></title>
     <meta charset="UTF-8">
@@ -10,20 +10,35 @@
   </head>
   <body>
     <main x-data="{
-      carb_ratio: $persist(50), 
+      b_carb_ratio: $persist(14), 
+      l_carb_ratio: $persist(29),
+      d_carb_ratio: $persist(25),
       corr_target: $persist(150), 
-      corr_factor: $persist(300),
+      corr_factor: $persist(200),
+      n_corr_factor: $persist(300),
+      meal: 'd',
       carbs: 0,
       sugar: 0
-    }">
+    }"
+    x-init="meal = setMeal()">
       <div class="container flex flex-col md:flex-row justify-center items-center mt-8 gap-4">
-        <div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Meal</span>
+          </label>
+          <div class="btn-group border border-primary rounded-full">
+            <input type="radio" name="options" data-title="Breakfast" value="b" x-model="meal" class="btn" />
+            <input type="radio" name="options" data-title="Lunch" value="l" x-model="meal" class="btn" />
+            <input type="radio" name="options" data-title="Dinner" value="d" x-model="meal" class="btn" />
+          </div>
+        </div>
+        <div class="form-control">
           <label class="label">
             <span class="label-text">Carbs eaten</span>
           </label>
           <input type="number" x-model="carbs" class="input input-bordered input-primary w-full max-w-xs">
         </div>
-        <div>
+        <div class="form-control">
           <label class="label">
             <span class="label-text">Blood sugar</span>
           </label>
@@ -39,9 +54,17 @@
       <div class="modal">
         <div class="modal-box">
           <label class="label">
-            <span class="label-text">Carb ratio</span>
+            <span class="label-text">Breakfast carb ratio</span>
           </label>
-          <input type="text" x-model="carb_ratio" class="input input-bordered input-primary w-full max-w-xs">
+          <input type="text" x-model="b_carb_ratio" class="input input-bordered input-primary w-full max-w-xs">
+          <label class="label">
+            <span class="label-text">Lunch carb ratio</span>
+          </label>
+          <input type="text" x-model="l_carb_ratio" class="input input-bordered input-primary w-full max-w-xs">
+          <label class="label">
+            <span class="label-text">Dinner carb ratio</span>
+          </label>
+          <input type="text" x-model="d_carb_ratio" class="input input-bordered input-primary w-full max-w-xs">
           <label class="label">
             <span class="label-text">Correction target<span>
           </label>
@@ -50,6 +73,10 @@
             <span class="label-text">Correction factor<span>
           </label>
           <input type="text" x-model="corr_factor" class="input input-bordered input-primary w-full max-w-xs">
+          <label class="label">
+            <span class="label-text">Nighttime correction factor<span>
+          </label>
+          <input type="text" x-model="n_corr_factor" class="input input-bordered input-primary w-full max-w-xs">
           <div class="modal-action">
             <label for="my-modal" class="btn">Close</label>
           </div>
@@ -57,9 +84,21 @@
       </div>
     </main>
     <script>
-      function calc({carbs, sugar, carb_ratio, corr_target, corr_factor}) {
+      function calc(data) {
+        const {meal, carbs, sugar, corr_target} = data
+        let carb_ratio = data.d_carb_ratio
+        if (meal == 'b') {
+          carb_ratio = data.b_carb_ratio
+        } else if (meal == 'l') {
+          carb_ratio = data.l_carb_ratio
+        }
+        let corr_factor = data.corr_factor
+        if (meal == 'n') {
+          corr_factor = data.n_corr_factor
+        }
         let carb_dose = Number((carbs / carb_ratio).toFixed(1))
         let corr_dose = Math.max(Number(((sugar - corr_target) / corr_factor).toFixed(1)), 0)
+        console.log(meal)
 
         return round_to_half(carb_dose + corr_dose)
       }
@@ -72,6 +111,20 @@
           return Math.floor(number) + 0.5
         } else {
           return Math.ceil(number)
+        }
+      }
+
+      function setMeal() {
+        const hours = new Date().getHours()
+
+        if (hours < 7 || hours > 20) {
+          return 'n'
+        } else if (hours < 10) {
+          return 'b'
+        } else if (hours < 17) {
+          return 'l'
+        } else {
+          return 'd'
         }
       }
     </script>
