@@ -1,7 +1,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-.btn-group > input[type="radio"].btn::before {
-  display: block;
-}
