@@ -1,7 +1,7 @@
 {
   "name": "Carb calculator",
   "short_name": "CarbCalc",
-  "start_url": ".",
+  "start_url": "https://jolly-medovik-562e9f.netlify.app/",
   "display": "standalone",
   "background_color": "#fff",
   "description": "An app for calulating insulin doses",
