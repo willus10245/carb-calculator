@@ -96,15 +96,14 @@
         if (meal == 'n') {
           corr_factor = data.n_corr_factor
         }
-        let carb_dose = Number((carbs / carb_ratio).toFixed(1))
-        let corr_dose = Math.max(Number(((sugar - corr_target) / corr_factor).toFixed(1)), 0)
-        console.log(meal)
+        const carb_dose = Number((carbs / carb_ratio).toFixed(1))
+        const corr_dose = Math.max(Number(((sugar - corr_target) / corr_factor).toFixed(1)), 0)
 
         return round_to_half(carb_dose + corr_dose)
       }
 
       function round_to_half(number) {
-        let decimal = number % 1
+        const decimal = number % 1
         if (decimal < 0.35) {
           return Math.floor(number)
         } else if (decimal < 0.75) {
